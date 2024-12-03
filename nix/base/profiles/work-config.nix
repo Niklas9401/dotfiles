@@ -57,14 +57,14 @@
     awscli2
 
     # Javascript stuff
-    nodejs_20  # switch to v22 in October 2024 (because it is currently not LTS)
-    yarn
+    # nodejs_20  # switch to v22 in October 2024 (because it is currently not LTS)
+    # yarn
 
     # other
-    openvpn
-    yubioath-flutter
-    keepassxc
-    thefuck
+    # openvpn
+    # yubioath-flutter
+    # keepassxc
+    # thefuck
   ];
 
   #################################

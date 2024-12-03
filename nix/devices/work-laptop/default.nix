@@ -58,20 +58,8 @@
   
 
   # Bootloader
-  boot.loader = {
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/boot/efi";
-    };
-    systemd-boot.enable = false;
-    grub = {
-      enable = true;
-      enableCryptodisk = true;
-      useOSProber = true;
-      device = "nodev";
-      efiSupport = true;
-    };
-  };
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
 
   # Swapfile
   swapDevices = [{

@@ -17,7 +17,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.user-themes
     gnomeExtensions.system-monitor
-    yaru-theme
+    # yaru-theme
 
     # general
     flameshot
@@ -111,9 +111,9 @@
         clock-show-weekday = true;
         show-battery-percentage = true;
         color-scheme = "prefer-dark";
-        gtk-theme = "Yaru";
-        cursor-theme = "Yaru";
-        icon-theme = "Yaru";
+        # gtk-theme = "Yaru";
+        # cursor-theme = "Yaru";
+        # icon-theme = "Yaru";
       };
       "org/gnome/shell/extensions/user-theme" = {
         name = "Yaru-dark";
@@ -131,10 +131,10 @@
       };
       "org/gnome/shell" = {
         favorite-apps = [
-          "chrome-cifhbcnohmdccbgoicgdjpfamggdegmo-Default.desktop" # Microsoft Teams PWA
-          "chrome-pkooggnaalmfkidjmlhoelhdllpphaga-Default.desktop" # Microsoft Outlook PWA
-          "org.keepassxc.KeePassXC.desktop"
-          "com.yubico.authenticator.desktop"
+          # "chrome-cifhbcnohmdccbgoicgdjpfamggdegmo-Default.desktop" # Microsoft Teams PWA
+          # "chrome-pkooggnaalmfkidjmlhoelhdllpphaga-Default.desktop" # Microsoft Outlook PWA
+          # "org.keepassxc.KeePassXC.desktop"
+          # "com.yubico.authenticator.desktop"
           "org.gnome.Nautilus.desktop"
           "code.desktop"
           "idea-ultimate.desktop"
