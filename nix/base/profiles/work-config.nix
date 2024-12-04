@@ -1,15 +1,44 @@
 { config, pkgs, lib, nix-vscode-extensions, ... }:
 
 {
+  nixpkgs.config.allowUnsupportedSystem = true;
+
   #################################
   ############ PACKAGES ###########
   #################################
+
+  programs.chromium.enable = true;
+  programs.chromium.extensions = [
+    "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin
+    "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
+    "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
+  ];
 
   # List GUI packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     # Jetbrains
     jetbrains.idea-ultimate
+    jetbrains.webstorm
+    jetbrains.rider
+    jetbrains.pycharm-professional
+    jetbrains.goland
+    jetbrains.datagrip
+    android-studio
+    libreoffice-qt6-fresh
+
+    flutter
+
+    # AWS stuff
+    awscli2
+
+    # Javascript stuff
+    # nodejs_20  # switch to v22 in October 2024 (because it is currently not LTS)
+    # yarn
+    spotify
+    teams-for-linux
+    google-chrome
+
 
     # VS Code
     (vscode-with-extensions.override {
@@ -38,6 +67,8 @@
         k--kato.intellij-idea-keybindings
         axelrindle.duplicate-file
         ms-azuretools.vscode-docker
+        github.copilot
+
 
         # nix
         bbenoist.nix
@@ -52,19 +83,6 @@
         ms-python.python
       ];
     })
-
-    # AWS stuff
-    awscli2
-
-    # Javascript stuff
-    # nodejs_20  # switch to v22 in October 2024 (because it is currently not LTS)
-    # yarn
-
-    # other
-    # openvpn
-    # yubioath-flutter
-    # keepassxc
-    # thefuck
   ];
 
   #################################

@@ -17,6 +17,11 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.user-themes
     gnomeExtensions.system-monitor
+    # gnomeExtensions.quick-settings-tweaker
+    gnomeExtensions.media-controls
+    # gnomeExtensions.just-perfection
+    # gnomeExtensions.pano
+    
     # yaru-theme
 
     # general
@@ -33,6 +38,7 @@
     wireshark
     gparted
     insomnia
+    myxer
   ];
 
   #################################
@@ -56,20 +62,23 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  # hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
-  services.pipewire = {
-    enable = true;
-    alsa.enable = true;
-    alsa.support32Bit = true;
-    pulse.enable = true;
+  # services.pipewire = {
+  #   enable = true;
+  #   alsa.enable = true;
+  #   alsa.support32Bit = true;
+  #   pulse.enable = true;
     # If you want to use JACK applications, uncomment this
     #jack.enable = true;
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
     #media-session.enable = true;
-  };
+  # };
+
+  hardware.pulseaudio.enable = true;
+  hardware.pulseaudio.support32Bit = true;  
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
@@ -104,6 +113,11 @@
           pkgs.gnomeExtensions.dash-to-dock.extensionUuid
           pkgs.gnomeExtensions.user-themes.extensionUuid
           pkgs.gnomeExtensions.system-monitor.extensionUuid
+          pkgs.gnomeExtensions.media-controls.extensionUuid
+          # pkgs.gnomeExtensions.pano.extensionUuid
+          # pkgs.gnomeExtensions.quick-settings-tweaker.extensionUuid
+          # pkgs.gnomeExtensions.just-perfection.extensionUuid
+
         ];
       };
       "org/gnome/desktop/interface" = {
@@ -116,13 +130,13 @@
         # icon-theme = "Yaru";
       };
       "org/gnome/shell/extensions/user-theme" = {
-        name = "Yaru-dark";
+        # name = "Yaru-dark";
       };
       "org/gnome/shell/extensions/dash-to-dock" = {
-        dock-position = "LEFT";
+        dock-position = "BOTTOM";
         dock-fixed = true;
         extend-height = true;
-        dash-max-icon-size = 42;
+        dash-max-icon-size = 32;
         click-action = "minimize-or-previews";
         multi-monitor = true;
         scroll-action = "cycle-windows";
@@ -132,16 +146,17 @@
       "org/gnome/shell" = {
         favorite-apps = [
           # "chrome-cifhbcnohmdccbgoicgdjpfamggdegmo-Default.desktop" # Microsoft Teams PWA
-          # "chrome-pkooggnaalmfkidjmlhoelhdllpphaga-Default.desktop" # Microsoft Outlook PWA
+          "teams-for-linux.desktop"
+          "chrome-pkooggnaalmfkidjmlhoelhdllpphaga-Default.desktop" # Microsoft Outlook PWA
           # "org.keepassxc.KeePassXC.desktop"
           # "com.yubico.authenticator.desktop"
           "org.gnome.Nautilus.desktop"
+          "google-chrome.desktop"
           "code.desktop"
           "idea-ultimate.desktop"
-          "webstorm.desktop"
+          "android-studio.desktop"
           "sublime_merge.desktop"
           "org.gnome.Console.desktop"
-          # "google-chrome.desktop"
         ];
       };
       "org/gnome/desktop/wm/preferences" = {
