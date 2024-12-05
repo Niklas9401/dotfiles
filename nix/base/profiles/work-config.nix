@@ -14,6 +14,12 @@
     "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
   ];
 
+  services.tailscale.enable = true;
+
+  environment.variables = {
+    CHROME_EXECUTABLE = "${pkgs.google-chrome}/bin/google-chrome-stable";
+  };
+
   # List GUI packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
@@ -26,8 +32,10 @@
     jetbrains.datagrip
     android-studio
     libreoffice-qt6-fresh
-
-    flutter
+    tailscale
+    xdg-desktop-portal
+    xdg-desktop-portal-gnome
+    xdotool
 
     # AWS stuff
     awscli2
@@ -38,6 +46,7 @@
     spotify
     teams-for-linux
     google-chrome
+    flutter
 
 
     # VS Code

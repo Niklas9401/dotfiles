@@ -99,6 +99,10 @@
     cls = "echo 'Are you stupid? I hate Windows and CMD!'";
   };
 
+  environment.gnome.excludePackages = with pkgs.gnome; [
+      gnome-screenshot
+  ];
+
   #################################
   ########## HOME-MANAGER #########
   #################################
