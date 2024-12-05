@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, nix-vscode-extensions, ... }:
 
 {
   imports = [
@@ -9,9 +9,27 @@
   ############ PACKAGES ###########
   #################################
 
+  programs.chromium = {
+    enable = true;
+    extraOpts = {
+      "PasswordManagerEnabled" = false;
+    };
+    extensions = [
+      "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin
+      "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
+      "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
+    ];
+  };
+
+  environment.variables = {
+    # Need for flutter
+    CHROME_EXECUTABLE = "${pkgs.google-chrome}/bin/google-chrome-stable";
+  };
+
   # List GUI packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
+
     # gnome
     gnome3.dconf-editor
     gnomeExtensions.dash-to-dock
@@ -22,16 +40,31 @@
     # gnomeExtensions.just-perfection
     # gnomeExtensions.pano
     
-    # yaru-theme
+    # Jetbrains
+    jetbrains.idea-ultimate
+    jetbrains.webstorm
+    jetbrains.rider
+    jetbrains.pycharm-professional
+    jetbrains.goland
+    jetbrains.datagrip
+    android-studio
+
+    # Flameshot requirements
+    xdg-desktop-portal
+    xdg-desktop-portal-gnome
+    xdotool
+    flameshot
 
     # general
-    flameshot
+    spotify
+    google-chrome
+    firefox
     vlc
     pinta
-    firefox
-    # google-chrome
     pdfarranger
     drawio
+    vscode
+    libreoffice-qt6-fresh
     
     # technical
     sublime-merge
@@ -39,6 +72,50 @@
     gparted
     insomnia
     myxer
+
+     (vscode-with-extensions.override {
+      # TODO remove after unstable updated to 1.93.0
+      vscode = pkgs.vscode.overrideAttrs(old: rec {
+        version = "1.94.2";
+        plat = "linux-x64";
+        src = fetchurl {
+          name = "VSCode_${version}_${plat}.tar.gz";
+          url = "https://update.code.visualstudio.com/${version}/${plat}/stable";
+          sha256 = "NktZowxWnt96Xa4Yxyv+oMmwHGylYIxFrpws/y0XhXA=";
+        };
+      });
+
+      vscodeExtensions = let
+        vscode-extensions = nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system};
+      in
+        with pkgs.lib.foldl' (acc: set: pkgs.lib.recursiveUpdate acc set) {} [
+          vscode-extensions.vscode-marketplace
+          # vscode-extensions.open-vsx # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
+          vscode-extensions.vscode-marketplace-release
+          # vscode-extensions.open-vsx-release # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
+        ];
+      [
+        # general
+        axelrindle.duplicate-file
+        ms-azuretools.vscode-docker
+        github.copilot
+
+        swssr.region-wrapper
+
+        # nix
+        bbenoist.nix
+        mkhl.direnv
+
+        # remote workspaces
+        ms-vscode-remote.remote-containers
+        # github.codespaces
+
+        # python
+        # ms-toolsai.jupyter
+        # ms-python.vscode-pylance
+        # ms-python.python
+      ];
+    })
   ];
 
   #################################
@@ -62,32 +139,28 @@
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  # hardware.pulseaudio.enable = false;
+
   security.rtkit.enable = true;
-  # services.pipewire = {
-  #   enable = true;
-  #   alsa.enable = true;
-  #   alsa.support32Bit = true;
-  #   pulse.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
     # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
+    jack.enable = true;
 
     # use the example session manager (no others are packaged yet so this is enabled by default,
     # no need to redefine it in your config for now)
-    #media-session.enable = true;
-  # };
+    # media-session.enable = true;
+  };
 
-  hardware.pulseaudio.enable = true;
-  hardware.pulseaudio.support32Bit = true;  
+  hardware.pulseaudio.enable = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
   # Microhpone noise suppression
   programs.noisetorch.enable = true;
-
-  # Install firefox
-  programs.firefox.enable = true;
 
   #################################
   ######### SHELL ALIASES #########
@@ -109,6 +182,17 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
   home-manager.users.niklas = {
+    home.file.".config/Code/User/settings.json".text = builtins.toJSON {
+      "editor.wordWrap" = "on";
+      "editor.fontSize" = 14;
+      "terminal.integrated.fontSize" = 14;
+    };
+
+    home.file.".config/gtk-3.0/bookmarks".text = ''
+      file:///etc/dotfiles dotfiles
+      file:///home/niklas/Desktop/projects projects
+    '';
+
     dconf.settings = {
       "org/gnome/shell" = {
         disable-user-extensions = false;

@@ -7,14 +7,8 @@
   ############ PACKAGES ###########
   #################################
 
-  programs.chromium.enable = true;
-  programs.chromium.extensions = [
-    "cjpalhdlnbpafiamejdnhcphjbkeiagm" # uBlock Origin
-    "eimadpbcbfnmbkopoojfekhnkhdbieeh" # Dark Reader
-    "nngceckbapebfimnlniiiahkandclblb" # Bitwarden
-  ];
-
   services.tailscale.enable = true;
+
 
   environment.variables = {
     CHROME_EXECUTABLE = "${pkgs.google-chrome}/bin/google-chrome-stable";
@@ -23,14 +17,6 @@
   # List GUI packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    # Jetbrains
-    jetbrains.idea-ultimate
-    jetbrains.webstorm
-    jetbrains.rider
-    jetbrains.pycharm-professional
-    jetbrains.goland
-    jetbrains.datagrip
-    android-studio
     libreoffice-qt6-fresh
     tailscale
     xdg-desktop-portal
@@ -38,60 +24,14 @@
     xdotool
 
     # AWS stuff
-    awscli2
+    # awscli2
 
     # Javascript stuff
     # nodejs_20  # switch to v22 in October 2024 (because it is currently not LTS)
     # yarn
     spotify
     teams-for-linux
-    google-chrome
     flutter
-
-
-    # VS Code
-    (vscode-with-extensions.override {
-      # TODO remove after unstable updated to 1.93.0
-      vscode = pkgs.vscode.overrideAttrs(old: rec {
-        version = "1.94.2";
-        plat = "linux-x64";
-        src = fetchurl {
-          name = "VSCode_${version}_${plat}.tar.gz";
-          url = "https://update.code.visualstudio.com/${version}/${plat}/stable";
-          sha256 = "NktZowxWnt96Xa4Yxyv+oMmwHGylYIxFrpws/y0XhXA=";
-        };
-      });
-
-      vscodeExtensions = let
-        vscode-extensions = nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system};
-      in
-        with pkgs.lib.foldl' (acc: set: pkgs.lib.recursiveUpdate acc set) {} [
-          vscode-extensions.vscode-marketplace
-          # vscode-extensions.open-vsx # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
-          vscode-extensions.vscode-marketplace-release
-          # vscode-extensions.open-vsx-release # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
-        ];
-      [
-        # general
-        k--kato.intellij-idea-keybindings
-        axelrindle.duplicate-file
-        ms-azuretools.vscode-docker
-        github.copilot
-
-
-        # nix
-        bbenoist.nix
-        mkhl.direnv
-
-        # remote workspaces
-        ms-vscode-remote.remote-containers
-
-        # python
-        ms-toolsai.jupyter
-        ms-python.vscode-pylance
-        ms-python.python
-      ];
-    })
   ];
 
   #################################
@@ -102,23 +42,53 @@
   #################################
   ######### SHELL ALIASES #########
   #################################
-  # no additional config (see nix/base/gui.nix)
+  # no additional config (see nix/base/general_profile.nix)
 
   #################################
   ########## HOME-MANAGER #########
   #################################
+
   home-manager.users.niklas = {
-    home.file.".config/Code/User/settings.json".text = builtins.toJSON {
-      "editor.wordWrap" = "on";
-      "editor.fontSize" = 14;
-      "terminal.integrated.fontSize" = 14;
+
+    dconf.settings = {
+      "org/gnome/shell" = {
+        disable-user-extensions = false;
+        disabled-extensions = [];
+        enabled-extensions = [
+          pkgs.gnomeExtensions.dash-to-dock.extensionUuid
+          pkgs.gnomeExtensions.user-themes.extensionUuid
+          pkgs.gnomeExtensions.system-monitor.extensionUuid
+          pkgs.gnomeExtensions.media-controls.extensionUuid
+          # pkgs.gnomeExtensions.pano.extensionUuid
+          # pkgs.gnomeExtensions.quick-settings-tweaker.extensionUuid
+          # pkgs.gnomeExtensions.just-perfection.extensionUuid
+
+        ];
+      };
+      "org/gnome/shell" = {
+        favorite-apps = [
+          "org.gnome.Nautilus.desktop"
+          "google-chrome.desktop"
+          "code.desktop"
+          "idea-ultimate.desktop"
+          "android-studio.desktop"
+          "sublime_merge.desktop"
+          "org.gnome.Console.desktop"
+        ];
+      };
     };
 
-    home.file.".config/gtk-3.0/bookmarks".text = ''
-      file:///etc/dotfiles dotfiles
-      file:///home/niklas/Desktop/projects projects
-    '';
-
+   programs.git = {
+      userName = "Niklas Weiblen";
+      userEmail = "niklas.weiblen@focke.de";
+      extraConfig = {
+        commit.gpgsign = true;
+        gpg.format = "ssh";
+        user.signingkey = "/home/niklas/.ssh/id_ed25519.pub";
+      };
+    };
+  };  
+}
     # home.file.".ssh/config".text = ''
     #   Host ssh.dev.azure.com
     #     User git
@@ -130,14 +100,3 @@
     #     PubkeyAcceptedAlgorithms +ssh-rsa
     #     HostkeyAlgorithms +ssh-rsa
     # '';
-
-    programs.git = {
-      extraConfig = {
-        commit.gpgsign = true;
-        gpg.format = "ssh";
-        user.signingkey = "/home/niklas/.ssh/id_ed25519.pub";
-      };
-      userEmail = lib.mkForce "niklas.weiblen@focke.de";
-    };
-  };
-}

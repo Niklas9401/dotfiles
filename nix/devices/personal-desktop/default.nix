@@ -3,24 +3,59 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../base/gui.nix
+    ../../base/general_profile.nix
     ../../base/profiles/personal-config.nix
   ];
     
   # Bootloader
-  # TODO switch to GRUB
-  # - current issue: installation of GRUB creates EFI entry in `efibootmgr` but it will be deleted during boot
-  boot.loader = {
-    efi = {
-      canTouchEfiVariables = true;
-      efiSysMountPoint = "/boot/efi";
-    };
-    systemd-boot.enable = true;
-    timeout = 5;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
+# Enable OpenGL
+  hardware.opengl = {
+    enable = true;
   };
 
-  # Time
-  time.hardwareClockInLocalTime = true; # using local time (required for dual boot with Windows because it stores the local time)
+# Load nvidia driver for Xorg and Wayland
+  services.xserver.videoDrivers = ["nvidia"];
+
+  hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia.powerManagement.enable = false;
+  hardware.nvidia.powerManagement.finegrained = false;
+  hardware.nvidia.open = false;
+  hardware.opengl.driSupport32Bit = true;
+  hardware.nvidia.nvidiaSettings = true;
+# Special config to load the latest (535 or 550) driver for the support of the 4070 SUPER
+  hardware.nvidia.package = let 
+  rcu_patch = pkgs.fetchpatch {
+    url = "https://github.com/gentoo/gentoo/raw/c64caf53/x11-drivers/nvidia-drivers/files/nvidia-drivers-470.223.02-gpl-pfn_valid.patch";
+    hash = "sha256-eZiQQp2S/asE7MfGvfe6dA/kdCvek9SYa/FFGp24dVg=";
+  };
+in config.boot.kernelPackages.nvidiaPackages.mkDriver {
+#    version = "535.154.05";
+#    sha256_64bit = "sha256-fpUGXKprgt6SYRDxSCemGXLrEsIA6GOinp+0eGbqqJg=";
+#    sha256_aarch64 = "sha256-G0/GiObf/BZMkzzET8HQjdIcvCSqB1uhsinro2HLK9k=";
+#    openSha256 = "sha256-wvRdHguGLxS0mR06P5Qi++pDJBCF8pJ8hr4T8O6TJIo=";
+#    settingsSha256 = "sha256-9wqoDEWY4I7weWW05F4igj1Gj9wjHsREFMztfEmqm10=";
+#    persistencedSha256 = "sha256-d0Q3Lk80JqkS1B54Mahu2yY/WocOqFFbZVBh+ToGhaE=";
+
+    version = "550.40.07";
+    sha256_64bit = "sha256-KYk2xye37v7ZW7h+uNJM/u8fNf7KyGTZjiaU03dJpK0=";
+    sha256_aarch64 = "sha256-AV7KgRXYaQGBFl7zuRcfnTGr8rS5n13nGUIe3mJTXb4=";
+    openSha256 = "sha256-mRUTEWVsbjq+psVe+kAT6MjyZuLkG2yRDxCMvDJRL1I=";
+    settingsSha256 = "sha256-c30AQa4g4a1EHmaEu1yc05oqY01y+IusbBuq+P6rMCs=";
+    persistencedSha256 = "sha256-11tLSY8uUIl4X/roNnxf5yS2PQvHvoNjnd2CB67e870=";
+
+    patches = [ rcu_patch ];
+ };
+
+  # Yubikey Support
+  services.udev.packages = [ pkgs.yubikey-personalization ];
+
+  # programs.gnupg.agent = {
+  #   enable = true;
+  #   enableSSHSupport = true;
+  # };
 
   # Swapfile
   swapDevices = [{
@@ -29,5 +64,5 @@
   }];
 
   # Network
-  networking.hostName = "niklas-desktop"; # Define your hostname.
+  networking.hostName = "niklas-desktop_nixos"; # Define your hostname.
 }

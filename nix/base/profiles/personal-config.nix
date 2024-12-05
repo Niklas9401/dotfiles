@@ -1,9 +1,9 @@
 { config, pkgs, pkgs-unstable, nix-vscode-extensions, ... }:
 
 {
-  imports = [
-    ../modules/airplay-server.nix
-  ];
+  # imports = [
+  #   ../modules/airplay-server.nix
+  # ];
 
   #################################
   ############ PACKAGES ###########
@@ -13,30 +13,50 @@
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     # general
-    discord
-    spotify
+    steam
+    vesktop
     ausweisapp
+    whatsapp-for-linux
 
-    # Jetbrains
-    jetbrains.idea-ultimate
-    pkgs-unstable.jetbrains.webstorm
+    # other coding stuff
+    rpi-imager
 
-    # VS Code
+    # 3d printing
+    # openscad
+    # prusa-slicer
+
+    # other
+    yubioath-flutter
+    thefuck
+
     (vscode-with-extensions.override {
+      # TODO remove after unstable updated to 1.93.0
+      vscode = pkgs.vscode.overrideAttrs(old: rec {
+        version = "1.94.2";
+        plat = "linux-x64";
+        src = fetchurl {
+          name = "VSCode_${version}_${plat}.tar.gz";
+          url = "https://update.code.visualstudio.com/${version}/${plat}/stable";
+          sha256 = "NktZowxWnt96Xa4Yxyv+oMmwHGylYIxFrpws/y0XhXA=";
+        };
+      });
+
       vscodeExtensions = let
         vscode-extensions = nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system};
       in
         with pkgs.lib.foldl' (acc: set: pkgs.lib.recursiveUpdate acc set) {} [
           vscode-extensions.vscode-marketplace
-          vscode-extensions.open-vsx
+          # vscode-extensions.open-vsx # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
           vscode-extensions.vscode-marketplace-release
-          vscode-extensions.open-vsx-release
+          # vscode-extensions.open-vsx-release # TODO use after ms-toolsai.jupyter is updated to v2024.8.x
         ];
       [
         # general
-        k--kato.intellij-idea-keybindings
         axelrindle.duplicate-file
         ms-azuretools.vscode-docker
+        github.copilot
+
+        swssr.region-wrapper
 
         # nix
         bbenoist.nix
@@ -44,26 +64,14 @@
 
         # remote workspaces
         ms-vscode-remote.remote-containers
-        github.copilot
-        github.codespaces
+        # github.codespaces
 
         # python
-        ms-toolsai.jupyter
-        ms-python.vscode-pylance
-        ms-python.python
+        # ms-toolsai.jupyter
+        # ms-python.vscode-pylance
+        # ms-python.python
       ];
     })
-
-    # other coding stuff
-    rpi-imager
-
-    # 3d printing
-    openscad
-    prusa-slicer
-
-    # other
-    yubioath-flutter
-    thefuck
   ];
 
   #################################
@@ -75,29 +83,76 @@
     allowedTCPPorts = [];
     allowedUDPPorts = [
       # Matter IoT protocol
-      5353 # mDNS
-      5540 # Matter
+      # 5353 # mDNS
+      # 5540 # Matter
     ];
   };
 
   #################################
   ######### SHELL ALIASES #########
   #################################
-  # no additional config (see nix/base/gui.nix)
+  # no additional config (see nix/base/general_profile.nix)
 
   #################################
   ########## HOME-MANAGER #########
   #################################
   home-manager.users.niklas = {
-    home.file.".config/Code/User/settings.json".text = builtins.toJSON {
-      "editor.wordWrap" = "on";
-      "editor.fontSize" = 14;
-      "terminal.integrated.fontSize" = 14;
+
+    dconf.settings = {
+      "org/gnome/shell" = {
+        disable-user-extensions = false;
+        disabled-extensions = [];
+        enabled-extensions = [
+          pkgs.gnomeExtensions.dash-to-dock.extensionUuid
+          pkgs.gnomeExtensions.user-themes.extensionUuid
+          pkgs.gnomeExtensions.system-monitor.extensionUuid
+          pkgs.gnomeExtensions.media-controls.extensionUuid
+          # pkgs.gnomeExtensions.pano.extensionUuid
+          # pkgs.gnomeExtensions.quick-settings-tweaker.extensionUuid
+          # pkgs.gnomeExtensions.just-perfection.extensionUuid
+
+        ];
+      };
+      "org/gnome/shell" = {
+        favorite-apps = [
+          "org.gnome.Nautilus.desktop"
+          "vesktop.desktop"
+          "steam.desktop"
+          "spotify.desktop"
+          "google-chrome.desktop"
+          "code.desktop"
+          "idea-ultimate.desktop"
+          "rider.desktop"
+          "datagrip.desktop"
+          "android-studio.desktop"
+          "sublime_merge.desktop"
+          "org.gnome.Console.desktop"
+        ];
+      };
     };
 
-    home.file.".config/gtk-3.0/bookmarks".text = ''
-      file:///etc/dotfiles dotfiles
-      file:///home/niklas/Desktop/projects projects
-    '';
+
+    programs.git = {
+      userName = "Niklas Weiblen";
+      userEmail = "niklas@weiblen.dev";
+      extraConfig = {
+        commit.gpgsign = true;
+        gpg.format = "ssh";
+        user.signingkey = "/home/niklas/.ssh/id_ed25519.pub";
+      };
+    };
+
   };
 }
+
+ # home.file.".ssh/config".text = ''
+    #   Host ssh.dev.azure.com
+    #     User git
+    #     PubkeyAcceptedAlgorithms +ssh-rsa
+    #     HostkeyAlgorithms +ssh-rsa
+      
+    #   Host vs-ssh.visualstudio.com
+    #     User git
+    #     PubkeyAcceptedAlgorithms +ssh-rsa
+    #     HostkeyAlgorithms +ssh-rsa
+    # '';

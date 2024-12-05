@@ -132,15 +132,6 @@
     home.stateVersion = "24.05";
     programs.home-manager.enable = true;
 
-    # custom config
-    programs.git = {
-      enable = true;
-      extraConfig = {
-        init.defaultBranch = "main";
-        credential.helper = "store";
-      };
-      userName = "Niklas Weiblen";
-      userEmail = "niklas.weiblen@focke.de";
-    };
+
   };
 }

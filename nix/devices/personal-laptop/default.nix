@@ -3,7 +3,7 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ../../base/gui.nix
+    ../../base/general_profile.nix
     ../../base/profiles/personal-config.nix
   ];
     
