@@ -9,6 +9,8 @@
 
   services.tailscale.enable = true;
 
+  nix.settings.trusted-users = ["root" "niklas"];
+
 
   environment.variables = {
     CHROME_EXECUTABLE = "${pkgs.google-chrome}/bin/google-chrome-stable";
@@ -32,6 +34,8 @@
     spotify
     teams-for-linux
     flutter
+    natscli
+    vmware-horizon-client
   ];
 
   #################################
