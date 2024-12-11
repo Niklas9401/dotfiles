@@ -21,6 +21,10 @@
     ];
   };
 
+  # Android Debug Bridge
+  programs.adb.enable = true;
+  users.users."niklas".extraGroups = ["adbusers"];
+
   environment.variables = {
     # Need for flutter
     CHROME_EXECUTABLE = "${pkgs.google-chrome}/bin/google-chrome-stable";
@@ -35,8 +39,12 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.user-themes
     gnomeExtensions.system-monitor
-    # gnomeExtensions.quick-settings-tweaker
+    gnomeExtensions.coverflow-alt-tab
+    gnomeExtensions.just-perfection
+    gnomeExtensions.tray-icons-reloaded
     gnomeExtensions.media-controls
+    gnomeExtensions.cronomix
+    # gnomeExtensions.quick-settings-tweaker
     # gnomeExtensions.just-perfection
     # gnomeExtensions.pano
     
@@ -65,6 +73,10 @@
     drawio
     vscode
     libreoffice-qt6-fresh
+
+    #Open Broadcaster Studio
+    obs-studio
+    obs-studio-plugins.wlrobs
     
     # technical
     sublime-merge
@@ -202,6 +214,10 @@
           pkgs.gnomeExtensions.user-themes.extensionUuid
           pkgs.gnomeExtensions.system-monitor.extensionUuid
           pkgs.gnomeExtensions.media-controls.extensionUuid
+          pkgs.gnomeExtensions.coverflow-alt-tab.extensionUuid
+          pkgs.gnomeExtensions.just-perfection.extensionUuid
+          pkgs.gnomeExtensions.tray-icons-reloaded.extensionUuid  
+          pkgs.gnomeExtensions.cronomix.extensionUuid
           # pkgs.gnomeExtensions.pano.extensionUuid
           # pkgs.gnomeExtensions.quick-settings-tweaker.extensionUuid
           # pkgs.gnomeExtensions.just-perfection.extensionUuid
