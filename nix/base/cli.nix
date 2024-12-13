@@ -72,6 +72,7 @@
     git
     bash
     zip
+    unzip
     vim
     nano
     wget
@@ -84,6 +85,7 @@
     usbutils
     xsensors
     static-web-server # http server
+    screen
   ];
   
   #################################
