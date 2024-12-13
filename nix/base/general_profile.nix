@@ -35,6 +35,7 @@
     gnomeExtensions.dash-to-dock
     gnomeExtensions.user-themes
     gnomeExtensions.system-monitor
+    gnomeExtensions.tray-icons-reloaded
     # gnomeExtensions.quick-settings-tweaker
     gnomeExtensions.media-controls
     # gnomeExtensions.just-perfection
@@ -65,6 +66,8 @@
     drawio
     vscode
     libreoffice-qt6-fresh
+
+    jdk21_headless
     
     # technical
     sublime-merge
@@ -194,6 +197,12 @@
     '';
 
     dconf.settings = {
+
+      "org/gnome/desktop/peripherals/keyboard" = {
+        numlock-state = true;
+        remember-numlock-state = true;
+      };
+
       "org/gnome/shell" = {
         disable-user-extensions = false;
         disabled-extensions = [];

@@ -59,6 +59,7 @@
           pkgs.gnomeExtensions.user-themes.extensionUuid
           pkgs.gnomeExtensions.system-monitor.extensionUuid
           pkgs.gnomeExtensions.media-controls.extensionUuid
+          pkgs.gnomeExtensions.tray-icons-reloaded.extensionUuid
           # pkgs.gnomeExtensions.pano.extensionUuid
           # pkgs.gnomeExtensions.quick-settings-tweaker.extensionUuid
           # pkgs.gnomeExtensions.just-perfection.extensionUuid
